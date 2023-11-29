@@ -65,7 +65,8 @@ function App() {
   }
 
   // const  renderMorePhotos = () => {
-  //   setPage(prevState => (prevState+1));  
+  //   setPage(prevState => (prevState + 1)); 
+    
   // }
 
     function showLoadMoreButton() {
@@ -78,17 +79,12 @@ function App() {
   
   return (
       <Container>
-        <Searchbar submit={getSearchQuery} />
-                
+        <Searchbar submit={getSearchQuery} />              
         {error && <Error>{error}</Error>}
-
-        {loading && <Loader />}
-        
+        {loading && <Loader />}        
         {searchQuery === "" && <Notification>Enter a keyword to find photos.</Notification>}
-
         {images.length > 0 && <ImageGallery photos={images} />}
-
-        {isShowButtom && !error && !loading && <LoadMoreButton click={()=> setPage(prevState => (prevState+1))}/>}
+        {isShowButtom && !error && !loading && <LoadMoreButton click={()=>setPage(prevState => (prevState + 1))}/>}
                
         <ToastContainer autoClose={2000} />
       </Container>

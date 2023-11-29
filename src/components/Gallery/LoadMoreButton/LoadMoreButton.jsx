@@ -1,9 +1,9 @@
-import {Button} from './LoadMoreButton.styled'
+import { Button } from './LoadMoreButton.styled';
 
 function LoadMoreButton({ click }) {
-    return (
+    return (        
         <Button onClick={click} type="button">
-            Load more
+            Load more                     
         </Button>)
 }
 

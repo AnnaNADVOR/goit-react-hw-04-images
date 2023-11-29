@@ -7,7 +7,6 @@ import {
 } from './Modal.styled'
 
 
-
 function Modal({ closeModal, largeImageURL, tags }) {
 
     useEffect(() => {
@@ -23,7 +22,7 @@ function Modal({ closeModal, largeImageURL, tags }) {
             window.removeEventListener('keydown', onEscClick);
         }
 
-    }, []);
+    }, [closeModal]);
     
     const onOverlayClisk = (event) => {
         if (event.target === event.currentTarget) {
@@ -37,9 +36,7 @@ function Modal({ closeModal, largeImageURL, tags }) {
                     <ModalPhoto src={largeImageURL} alt={tags} />
                 </ModalField>
             </Overlay>
-    )
-
-    
+    )    
 }
 
 export default Modal; 
