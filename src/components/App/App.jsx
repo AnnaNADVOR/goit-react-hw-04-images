@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect} from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,90 +12,87 @@ import Notification from '../Gallery/Notification/Notification';
 import { Container } from './App.styled';
 import fetchGallery from "services/gallery.api";
 
-class App extends Component {
-  state = {
-    searchQuery: '',
-    page: 1, 
-    totalImages: 0,
-    images: [], 
-    error: null,
-    loading: false,    
-  }
 
-  componentDidUpdate(_, prevState) {
-    const { searchQuery, page } = this.state;
-   
-    if (searchQuery !== prevState.searchQuery || page !== prevState.page) {
-           
+
+function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalImages, setTotalImages] = useState(0);
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+
+    if (searchQuery === '') {
+          return;
+        }
+
     fetchGallery(searchQuery, page)
-        .then(data => {
-          if (data.hits.length === 0) {
-            this.setState({ error: 'No items found! Enter other serch therm.', totalImages: 0, });
-            return;
-          }
-
-          if (page === 1) {
-            this.setState({images: [...data.hits],  totalImages: data.totalHits,});   
-            toast.info(`Found ${data.totalHits} items.`);
-            return;
-          }
-
-          this.setState(() => ({         
-            images: [...prevState.images, ...data.hits],
-            totalImages: data.totalHits
-            }  
-          ))    
-        })
-        .catch(error => this.setState({ error: 'Oops! Something went wrong. Try again.' }))
-        .finally(() => this.setState({ loading: false }));      
-    }
-  }
-
-  getSearchQuery = (value) => {
-    if (this.state.searchQuery === value) {
+      .then(data => {
+       
+        if (data.hits.length === 0) {
+          setError('No items found! Enter other serch therm.');
+          setTotalImages(0);
+          return;
+        }
+   
+        if (page === 1) {
+          setImages([...data.hits]);
+          setTotalImages(data.totalHits);
+          toast.info(`Found ${data.totalHits} items.`);
+          return;
+        }
+        
+        setImages(prevState => [...prevState, ...data.hits]);
+        setTotalImages(data.totalHits);       
+      })
+      .catch(error => setError('Oops! Something went wrong. Try again.'))
+      .finally(() => setLoading(false))    
+    
+  },[searchQuery, page])
+    
+  const getSearchQuery = (value) => {
+    if (searchQuery === value) {
       return;
     }
-    this.setState({
-      page: 1, 
-      searchQuery: value, 
-      loading: true,
-      error: null,
-      images: [],
-        
-    })
+    setPage(1);
+    setSearchQuery(value);
+    setLoading(true);
+    setError(null);
+    setImages([]);
   }
 
-  renderMorePhotos = () => {
-    this.setState(prevState => ({ page: prevState.page + 1}));  
-  }
+  // const  renderMorePhotos = () => {
+  //   setPage(prevState => (prevState+1));  
+  // }
 
-  showLoadMoreButton() {
-    const { page, totalImages } = this.state;
-
-    if (page < Math.ceil(totalImages / 12)) {
+    function showLoadMoreButton() {
+     if (page < Math.ceil(totalImages / 12)) {
         return true;
     }     
   }
-  
-  render() {
-    const { searchQuery, images, error, loading } = this.state;
-    const isShowButtom = this.showLoadMoreButton();
 
-    return (
+  const isShowButtom = showLoadMoreButton();
+  
+  return (
       <Container>
-        <Searchbar submit={this.getSearchQuery} />
+        <Searchbar submit={getSearchQuery} />
+                
         {error && <Error>{error}</Error>}
-        {loading && <Loader/>}
+
+        {loading && <Loader />}
+        
         {searchQuery === "" && <Notification>Enter a keyword to find photos.</Notification>}
+
         {images.length > 0 && <ImageGallery photos={images} />}
-        {isShowButtom && !error && !loading && <LoadMoreButton click={this.renderMorePhotos} />}    
+
+        {isShowButtom && !error && !loading && <LoadMoreButton click={()=> setPage(prevState => (prevState+1))}/>}
                
-        <ToastContainer autoClose={2000}/>
+        <ToastContainer autoClose={2000} />
       </Container>
     )
   }
-
-}
-
 
 export default App; 

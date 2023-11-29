@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useEffect } from "react";
 
 import {
     Overlay,
@@ -6,37 +6,40 @@ import {
     ModalPhoto
 } from './Modal.styled'
 
-class Modal extends Component {
-    componentDidMount() {
-        window.addEventListener("keydown", this.onEscClick)
-    }
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.onEscClick);
-    }
-   
-    onEscClick= (event) => {
-        if (event.code === "Escape") {
-            this.props.closeModal();
+
+
+function Modal({ closeModal, largeImageURL, tags }) {
+
+    useEffect(() => {
+        const onEscClick = (event) => {
+            if (event.code === "Escape") {
+                closeModal();
+            }
+        }
+        
+        window.addEventListener("keydown", onEscClick);
+        
+        return () => {
+            window.removeEventListener('keydown', onEscClick);
+        }
+
+    }, []);
+    
+    const onOverlayClisk = (event) => {
+        if (event.target === event.currentTarget) {
+            closeModal();
         }
     }
 
-    onOverlayClisk = (event) => {
-        if (event.target === event.currentTarget) {
-            this.props.closeModal();
-        }
-    }
-      
-    render() {
-        const { largeImageURL, tags } = this.props;
-        
-        return (
-            <Overlay onClick={this.onOverlayClisk}>
+    return ( 
+        <Overlay onClick={onOverlayClisk}>
                 <ModalField>
                     <ModalPhoto src={largeImageURL} alt={tags} />
                 </ModalField>
             </Overlay>
-        )           
-    }
+    )
+
+    
 }
 
 export default Modal; 

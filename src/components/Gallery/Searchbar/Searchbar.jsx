@@ -1,6 +1,6 @@
 import { BiSearchAlt } from "react-icons/bi";
 import { toast } from 'react-toastify';
-import { Component } from "react";
+import { useState } from "react";
 
 import {
     Header,
@@ -10,41 +10,33 @@ import {
 
 } from "./Searchbar.styled";
 
-class Searchbar extends Component {
-    state = {
-        searchQuery: "",
-    }
-
-    onSubmitForm = (event) => {
+function Searchbar({submit}) {
+    
+   const [searchQuery, setSearchQuery] = useState(''); 
+ 
+   const onSubmitForm = (event) => {
         event.preventDefault(); 
 
-        if (this.state.searchQuery.trim() === "") {
+        if (searchQuery.trim() === "") {
            return toast.error("Enter you serch therm!");
         }
 
-        this.props.submit(this.state.searchQuery);
-
-        // this.setState({
-        //     searchQuery: "",
-        // })
+        submit(searchQuery);
     }
 
-    onInputChange = event => {
+    const onInputChange = event => {
         const normaliseQuery = event.currentTarget.value.toLocaleLowerCase();
-        this.setState({
-            searchQuery: normaliseQuery,
-        })
-    }
-  
-    render() {
-        return(
+        setSearchQuery(normaliseQuery)
+    }  
+
+    return(
             <Header>
-                <SearchForm  onSubmit={this.onSubmitForm}>
+                <SearchForm  onSubmit={onSubmitForm}>
                     <SearchField     
                         type="text"                                     
                         placeholder="Search images and photos"
-                        value={this.state.searchQuery}
-                        onChange={this.onInputChange}
+                        value={searchQuery}
+                        onChange={onInputChange}
                      />
                     <SearchButton type="submit">
                         <BiSearchAlt />
@@ -52,7 +44,7 @@ class Searchbar extends Component {
                 </SearchForm >
             </Header>
         )
-    }
+    
 
 }
 

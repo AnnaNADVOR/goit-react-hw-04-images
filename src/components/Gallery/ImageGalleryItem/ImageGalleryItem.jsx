@@ -1,5 +1,5 @@
 import Modal from "../Modal/Modal";
-import { Component } from "react";
+import { useState } from "react";
 
 import {
     GalleryCard,
@@ -8,37 +8,26 @@ import {
 
 } from './ImageGalleryItem.styled';
 
-class ImageGalleryItem extends Component {
-    state = {
-    showModal: false, 
-    }
+function ImageGalleryItem({webformatURL, tags, largeImageURL}) {
+    const [showModal, setShowModal] = useState(false); 
 
-    toggleModal = () => {
-        this.setState(({showModal})=> ({
-            showModal: !showModal,
-        }))
-    }
+    const toggleModal = () => setShowModal(prevShowModal => !prevShowModal);
 
-    render() {
-        const { webformatURL, tags, largeImageURL } = this.props;
-        const { showModal } = this.state; 
-
-        return (
-            <>
-                <GalleryCard >
-                    <GalleryLink onClick={this.toggleModal}>
-                      <GalleryPhoto src={webformatURL} alt={tags} width="250px" />       
-                    </GalleryLink>                     
-                </GalleryCard > 
-                {showModal &&
-                    <Modal
-                    largeImageURL={largeImageURL}
-                    tags={tags}
-                    closeModal={this.toggleModal} />
-                }
-            </>       
-        )
-    }
+    return (
+        <>
+            <GalleryCard >
+                <GalleryLink onClick={toggleModal}>
+                  <GalleryPhoto src={webformatURL} alt={tags} width="250px" />       
+                 </GalleryLink>                     
+               </GalleryCard > 
+              {showModal &&
+                  <Modal
+                largeImageURL={largeImageURL}
+                tags={tags}
+                closeModal={toggleModal} />
+             }
+          </>      
+    )
 }
 
 export default ImageGalleryItem; 
